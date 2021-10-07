@@ -1,0 +1,115 @@
+<html>
+
+	<head>
+		<title> Eric's Test of Leaflet </title>
+		
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />">
+		
+		 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+			integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+			crossorigin=""/>
+			
+		
+
+			 <!-- Make sure you put this AFTER Leaflet's CSS -->
+			<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+				integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+				crossorigin=""></script>
+			<style>
+				html, body {
+					height: 100%;
+					margin: 0;
+				}
+				#map {
+					width: 600px;
+					height: 400px;
+				}
+			</style>
+
+			
+			<style>body { padding: 0; margin: 0; } #map { height: 100%; width: 100vw; }</style>
+	</head>
+	
+	<body class="">
+		<div id="mapid" style="width: 600px; height: 400px;" }></div>
+	
+	
+	<script>
+		var map = L.map('mapid').setView([40.574495, -105.084006], 25);
+		L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+			maxZoom: 18,
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			id: 'mapbox/streets-v11',
+			tileSize: 512,
+			zoomOffset: -1
+
+		}).addTo(map);
+		
+		var circle = L.circle([40.57419197304875, -105.08329955467342], {
+		color: 'red',
+		fillColor: '#f03',
+		fillOpacity: 0.5,
+		radius: 12
+		}).addTo(map).bindPopup("CS Department");
+		
+		var polygon = L.polygon([
+		[40.57383571981774, -105.0847173611225],
+		[40.573857475794625, -105.08436290951022],
+		[40.57447751816214, -105.08435216855227],
+		[40.574967021235665, -105.08414451003196],
+		[40.57502312684608, -105.08526276069865]
+		]).addTo(map).bindPopup("LCS");
+		
+		L.marker([40.574107800652456, -105.08329818627865]).addTo(map)
+		.bindPopup("<b>Hello CSU CS Department!</b><br />I am a popup.").openPopup();
+		
+			function onEachFeature(feature, layer) {
+		var popupContent = "<p>This is part of the CSU Campus</p>" ;
+
+		if (feature.properties && feature.properties.popupContent) {
+			popupContent += feature.properties.popupContent;
+		}
+
+		layer.bindPopup(popupContent);
+	}
+	
+	L.geoJSON(freeBus, {
+
+		filter: function (feature, layer) {
+			if (feature.properties) {
+				// If the property "underConstruction" exists and is true, return false (don't render features under construction)
+				return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
+			}
+			return false;
+		},
+
+		onEachFeature: onEachFeature
+	}).addTo(map);
+	
+	L.geoJSON([covidTesting, recCenter], {
+
+		style: function (feature) {
+			return feature.properties && feature.properties.style;
+		},
+
+		onEachFeature: onEachFeature,
+
+		pointToLayer: function (feature, latlng) {
+			return L.circleMarker(latlng, {
+				radius: 8,
+				fillColor: "#ff7800",
+				color: "#000",
+				weight: 1,
+				opacity: 1,
+				fillOpacity: 0.8
+			});
+		}
+	}).addTo(map);
+
+	
+	</script>
+	
+	</body>
+</html>
